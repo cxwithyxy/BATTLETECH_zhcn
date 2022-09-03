@@ -25,10 +25,11 @@ class CsvFS
         }
     }
 
-    async save(path: string)
+    async save(path: string, lzname: string = "KEY,zh-CN")
     {
         // console.log(this.dataList);
-        
+        this.dataList[0] = _.replace(this.dataList[0], "KEY,KEY",lzname)
+        this.dataList[this.dataList.length-1] = ""
         await fs.writeFile(path, this.dataList.join("\r\n"), {encoding: "utf-8"})
         return this
     }
