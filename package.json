@@ -1,0 +1,23 @@
+{
+  "name": "BATTLETECH_zhcn",
+  "version": "1.0.0",
+  "main": "build/main.js",
+  "repository": "https://github.com/cxwithyxy/BATTLETECH_zhcn.git",
+  "author": "cx2889 <523764720@qq.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/lodash": "^4.14.180",
+    "typescript": "4.5.4"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "moment": "^2.29.2",
+    "sleep-promise": "^9.1.0"
+  },
+  "scripts": {
+    "start": "yarn node .",
+    "build": "yarn tsc",
+    "build-start": "yarn build && yarn start",
+    "packexe": "yarn build && yarn electron-builder"
+  }
+}
