@@ -1,7 +1,7 @@
 import {app} from "electron"
 import fs from "fs/promises"
 import CsvFS from "./CsvFS"
-import Translater from "./Translater"
+import Translater from "./Translater-google"
 
 app.on("ready", async () => {
     let ttzh = new Translater()
@@ -19,10 +19,10 @@ app.on("ready", async () => {
     
     let oldVersionCsv = await new CsvFS().load("pre-data/localization/strings_zh-CN.csv")
     let oldVersionCsvMap = new Map()
-    oldVersionCsv.eachData(async (itemValue, itemKey, index, dataList) =>
-    {
-        oldVersionCsvMap.set(itemKey, itemValue)
-    })
+    // oldVersionCsv.eachData(async (itemValue, itemKey, index, dataList) =>
+    // {
+    //     oldVersionCsvMap.set(itemKey, itemValue)
+    // })
 
     let deVersionCsv = await new CsvFS().load("pre-data/localization/strings_de-DE.csv")
     let deVersionCsvMap = new Map()
