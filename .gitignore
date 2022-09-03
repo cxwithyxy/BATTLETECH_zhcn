@@ -1,4 +1,12 @@
 
 yarn.lock
 
-node_modules/
+node_modules
+build
+api.json
+dist
+yarn-error.log
+url.json
+.vscode
+
+strings_zh-CN.csv
