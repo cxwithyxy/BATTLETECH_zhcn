@@ -6,9 +6,7 @@ import Translater from "./Translater-google"
 
 app.on("ready", async () => {
     
-    let ttzh = new Translater()
-    await ttzh.init("de")
-    console.log(`ttzh.init`);
+    let ttzh = new Translater("de")
     
     let dictObj = JSON.parse(await fs.readFile(`pre-data/battletech-zh_Hans/battletech/main/BATTLETECH/translation-zh_Hans.json`,{encoding: "utf-8"}))
 
@@ -53,11 +51,6 @@ app.on("ready", async () => {
                 await fs.writeFile(`translatedObj.json`, JSON.stringify(translatedObj), {encoding: "utf-8"})
             }
         }
-        // if(finishWord && finishWord.includes("\n"))
-        // {
-        //     console.log(itemKey,finishWord);
-            
-        // }
         finishWord = _.replace(finishWord, /\n/g, "\\n")
         dataList[index] = itemKey + "," + (finishWord || itemKey)
     })

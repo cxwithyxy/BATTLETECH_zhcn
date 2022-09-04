@@ -6,10 +6,21 @@ import _ from "lodash"
 
 class Translater
 {
+    isInit = false
     driver!: ThenableWebDriver
+    fromLagulig!: string
 
-    async init(fromLagulig: string)
+    constructor(fromLagulig: string)
     {
+        this.fromLagulig = fromLagulig
+    }
+
+    async init()
+    {
+        if(this.isInit)
+        {
+            return
+        }
         let service = new chrome.ServiceBuilder('node_modules/electron-chromedriver/bin/chromedriver.exe');
         this.driver = new Builder()
         .withCapabilities({
@@ -21,8 +32,9 @@ class Translater
         .setChromeService(service)
         .build();
         
-        await this.driver.get(`https://translate.google.cn/?sl=${fromLagulig}&tl=zh-CN`)
+        await this.driver.get(`https://translate.google.cn/?sl=${this.fromLagulig}&tl=zh-CN`)
         await sleep(1e3)
+        this.isInit = true
     }
 
     async keepGetElement(css: string)
@@ -47,6 +59,7 @@ class Translater
 
     async translateToZhcn(text: string)
     {
+        await this.init()
         text = _.replace(text, //g, "{888}")
         let textInputEle
         for(;;)
