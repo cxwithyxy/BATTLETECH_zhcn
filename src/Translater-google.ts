@@ -2,6 +2,7 @@ import fetch from "node-fetch"
 import chrome from "selenium-webdriver/chrome"
 import {Builder, By, ThenableWebDriver, WebElement} from 'selenium-webdriver'
 import sleep from "sleep-promise"
+import _ from "lodash"
 
 class Translater
 {
@@ -21,7 +22,7 @@ class Translater
         .build();
         
         await this.driver.get(`https://translate.google.cn/?sl=${fromLagulig}&tl=zh-CN`)
-        await sleep(3e3)
+        await sleep(1e3)
     }
 
     async keepGetElement(css: string)
@@ -46,16 +47,19 @@ class Translater
 
     async translateToZhcn(text: string)
     {
+        text = _.replace(text, //g, "{888}")
         let textInputEle = await this.driver.findElement(By.className('er8xn'))
         if((await textInputEle.getAttribute("value")).length > 0)
         {
             let tta_clearEle = await this.keepGetElement('.DVHrxd')
-            await tta_clearEle.click()
+            try{
+                await tta_clearEle.click()
+            }catch(e){}
         }
-        await sleep(1e3)
+        await sleep(500)
         textInputEle = await this.driver.findElement(By.className('er8xn'))
         await textInputEle.sendKeys(text)
-        await sleep(1e3)
+        await sleep(500)
         let tta_output_taEle = await this.keepGetElement('.J0lOec')
         let returnWord = ""
         for(;;)
@@ -69,6 +73,7 @@ class Translater
                 await sleep(1e3)
             }
         }
+        returnWord = _.replace(returnWord,/\{888\}/g, "")
         return returnWord
     }
 

@@ -1,9 +1,11 @@
 import {app} from "electron"
 import fs from "fs/promises"
+import _ from "lodash"
 import CsvFS from "./CsvFS"
 import Translater from "./Translater-google"
 
 app.on("ready", async () => {
+    
     let ttzh = new Translater()
     await ttzh.init("de")
     console.log(`ttzh.init`);
@@ -19,10 +21,10 @@ app.on("ready", async () => {
     
     let oldVersionCsv = await new CsvFS().load("pre-data/localization/strings_zh-CN.csv")
     let oldVersionCsvMap = new Map()
-    // oldVersionCsv.eachData(async (itemValue, itemKey, index, dataList) =>
-    // {
-    //     oldVersionCsvMap.set(itemKey, itemValue)
-    // })
+    oldVersionCsv.eachData(async (itemValue, itemKey, index, dataList) =>
+    {
+        oldVersionCsvMap.set(itemKey, itemValue)
+    })
 
     let deVersionCsv = await new CsvFS().load("pre-data/localization/strings_de-DE.csv")
     let deVersionCsvMap = new Map()
@@ -33,30 +35,34 @@ app.on("ready", async () => {
 
     let cannotHandleList:string[] = []
     let devCsv = await new CsvFS().load("pre-data/localization/strings_dev-WWW.csv")
+    console.log("行数", devCsv.dataList.length)
     await devCsv.eachData(async (itemValue, itemKey, index, dataList) =>
     {
-        // if(!dictObj[itemKey] && !oldVersionCsvMap.get(itemKey))
-        // {
-        //     console.log(itemKey, index)
-        // }
-        let finishWord = dictObj[itemKey] || oldVersionCsvMap.get(itemKey) || translatedObj[itemKey]
-        if(!finishWord || finishWord == " ...")
+        let finishWord:string = dictObj[itemKey] || oldVersionCsvMap.get(itemKey) || translatedObj[itemKey]
+        if((!finishWord || finishWord == " ..."))
         {
             let waitForTranslate = deVersionCsvMap.get(itemKey)
-            if(waitForTranslate && index > 2)
+            
+            if(_.trim(waitForTranslate) && index > 2)
             {
-                
+                console.log("---Translate s---", itemKey, waitForTranslate);
                 finishWord = await ttzh.translateToZhcn(waitForTranslate)
-                console.log("Translate", itemKey, finishWord);
+                console.log("---Translate e---", finishWord);
                 cannotHandleList.push(itemKey + "," + finishWord)
                 translatedObj[itemKey] = finishWord
                 await fs.writeFile(`translatedObj.json`, JSON.stringify(translatedObj), {encoding: "utf-8"})
             }
         }
+        // if(finishWord && finishWord.includes("\n"))
+        // {
+        //     console.log(itemKey,finishWord);
+            
+        // }
+        finishWord = _.replace(finishWord, /\n/g, "\\n")
         dataList[index] = itemKey + "," + (finishWord || itemKey)
-        // console.log(dataList[index]);
     })
-    await devCsv.save("strings_zh-CN.csv")
+    console.log("行数", devCsv.dataList.length)
+    await devCsv.save("strings_de-DE.csv", "KEY,de-DE")
     await fs.writeFile("cannotHandleMap.txt", cannotHandleList.join("\r\n"), {encoding: "utf-8"})
     console.log("finish");
     

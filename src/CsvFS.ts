@@ -9,7 +9,7 @@ class CsvFS
     async load(path: string)
     {
         let dataText = await fs.readFile(path,{encoding: "utf-8"})
-        this.dataList = dataText.split("\r\n")
+        this.dataList = dataText.split("\n")
         return this
     }
 
@@ -30,7 +30,7 @@ class CsvFS
         // console.log(this.dataList);
         this.dataList[0] = _.replace(this.dataList[0], "KEY,KEY",lzname)
         this.dataList[this.dataList.length-1] = ""
-        await fs.writeFile(path, this.dataList.join("\r\n"), {encoding: "utf-8"})
+        await fs.writeFile(path, this.dataList.join("\n"), {encoding: "utf-8"})
         return this
     }
 }
