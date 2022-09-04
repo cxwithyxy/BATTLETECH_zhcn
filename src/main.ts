@@ -36,7 +36,22 @@ app.on("ready", async () => {
     console.log("行数", devCsv.dataList.length)
     await devCsv.eachData(async (itemValue, itemKey, index, dataList) =>
     {
-        let finishWord:string = dictObj[itemKey] || oldVersionCsvMap.get(itemKey) || translatedObj[itemKey]
+        let finishWord:string = dictObj[itemKey] || oldVersionCsvMap.get(itemKey)
+
+        if(
+            finishWord &&
+            (
+                finishWord.split("[").length != finishWord.split("]").length ||
+                finishWord.split("{").length != finishWord.split("}").length ||
+                finishWord.split("<").length != finishWord.split(">").length
+            )
+        )
+        {
+            finishWord = ""
+        }
+
+        finishWord = finishWord || translatedObj[itemKey]
+
         if((!finishWord || finishWord == " ..."))
         {
             let waitForTranslate = deVersionCsvMap.get(itemKey)
@@ -52,10 +67,15 @@ app.on("ready", async () => {
             }
         }
         finishWord = _.replace(finishWord, /\n/g, "\\n")
+
         dataList[index] = itemKey + "," + (finishWord || itemKey)
     })
     console.log("行数", devCsv.dataList.length)
+    
+    devCsv.dataList = _.sortBy(devCsv.dataList, item => item.length)
     await devCsv.save("strings_de-DE.csv", "KEY,de-DE")
+
+
     await fs.writeFile("cannotHandleMap.txt", cannotHandleList.join("\r\n"), {encoding: "utf-8"})
     console.log("finish");
     
