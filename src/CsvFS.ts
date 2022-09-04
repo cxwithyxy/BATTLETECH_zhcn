@@ -4,12 +4,16 @@ import _ from "lodash"
 
 class CsvFS
 {
+    topDataList: string[] = []
     dataList!: string[]
 
     async load(path: string)
     {
-        let dataText = await fs.readFile(path,{encoding: "utf-8"})
+        let dataText = _.trim(await fs.readFile(path,{encoding: "utf-8"}))
         this.dataList = dataText.split("\n")
+        this.topDataList.push(<string>this.dataList.shift())
+        this.topDataList.push(<string>this.dataList.shift())
+        this.topDataList.push(<string>this.dataList.shift())
         return this
     }
 
@@ -27,10 +31,9 @@ class CsvFS
 
     async save(path: string, lzname: string = "KEY,zh-CN")
     {
-        // console.log(this.dataList);
-        this.dataList[0] = _.replace(this.dataList[0], "KEY,KEY",lzname)
-        this.dataList[this.dataList.length-1] = ""
-        await fs.writeFile(path, this.dataList.join("\n"), {encoding: "utf-8"})
+        let writeDataList = _.concat(this.topDataList, this.dataList)
+        writeDataList[0] = lzname
+        await fs.writeFile(path, writeDataList.join("\n") + "\n", {encoding: "utf-8"})
         return this
     }
 }

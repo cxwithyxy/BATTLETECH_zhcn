@@ -41,7 +41,7 @@ app.on("ready", async () => {
         {
             let waitForTranslate = deVersionCsvMap.get(itemKey)
             
-            if(_.trim(waitForTranslate) && index > 2)
+            if(_.trim(waitForTranslate))
             {
                 console.log("---Translate s---", itemKey, waitForTranslate);
                 finishWord = await ttzh.translateToZhcn(waitForTranslate)
