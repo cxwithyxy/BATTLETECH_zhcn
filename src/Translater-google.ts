@@ -83,6 +83,7 @@ class Translater
             }
         }
         returnWord = _.replace(returnWord,/\{888\}/g, "")
+        returnWord = _.replace(returnWord,/\n/g, "")
         return returnWord
     }
 
