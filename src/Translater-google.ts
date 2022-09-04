@@ -48,15 +48,24 @@ class Translater
     async translateToZhcn(text: string)
     {
         text = _.replace(text, //g, "{888}")
-        let textInputEle = await this.driver.findElement(By.className('er8xn'))
-        if((await textInputEle.getAttribute("value")).length > 0)
+        let textInputEle
+        for(;;)
         {
-            let tta_clearEle = await this.keepGetElement('.DVHrxd')
-            try{
-                await tta_clearEle.click()
-            }catch(e){}
+            textInputEle = await this.driver.findElement(By.className('er8xn'))
+            if((await textInputEle.getAttribute("value")).length > 0)
+            {
+                await this.driver.executeScript("window.scrollTo(0,0)")
+                let tta_clearEle = await this.keepGetElement('.DVHrxd')
+                try{
+                    await tta_clearEle.click()
+                }catch(e){}
+            }
+            else
+            {
+                break
+            }
+            await sleep(500)
         }
-        await sleep(500)
         textInputEle = await this.driver.findElement(By.className('er8xn'))
         await textInputEle.sendKeys(text)
         await sleep(500)
